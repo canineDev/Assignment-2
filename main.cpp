@@ -1,85 +1,83 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <chrono>
+#include <cstdlib>
+
 using namespace std;
 using namespace chrono;
 
-int recursiveAlgo(vector<int>& A, int k, int i, int write) {    // Recursive algorithm
-    if (i == A.size()) return write;    // Return if at end of array
+// Recursive Algorithm
+int recursiveAlgo(vector<int>& A, int k, int i, int write) {
+    if (i == A.size()) return write;
 
-    write = recursiveAlgo(A, k, i + 1, write);  // Make recursive call
+    write = recursiveAlgo(A, k, i + 1, write);
 
-    if (A[i] <= k) {    // Check if current element is less/equal to k
+    if (A[i] <= k) {
         int val = A[i];
         for (int j = i; j > write; j--) {
             A[j] = A[j - 1];
         }
-        A[write] = val; // Set element at writing position to val; shift it over 
-        write++;    // Increment writing position
+        A[write] = val;
+        write++;
     }
     return write;
 }
 
-void recursiveWrapper(vector<int>& A, int k) {  // Wrapper to make recursive calls
+// Recursive function wrapper
+void recursiveWrapper(vector<int>& A, int k) {
     recursiveAlgo(A, k, 0, 0);
 }
 
+// Iterative Algorithm 
 void iterativeAlgo(vector<int>& A, int k) {
     vector<int> B;
     B.reserve(A.size());
 
-    for (int i = 0; i < A.size(); i++) {
+    for (int i = 0; i < (int)A.size(); i++) {
         if (A[i] <= k) B.push_back(A[i]);
     }
-    for (int i = 0; i < A.size(); i++) {
+    for (int i = 0; i < (int)A.size(); i++) {
         if (A[i] > k) B.push_back(A[i]);
     }
-    for (int i = 0; i < A.size(); i++) {
+    for (int i = 0; i < (int)A.size(); i++) {
         A[i] = B[i];
     }
 }
 
-// ===== Timing Harness =====
-long long recursiveTime(int n, int trials) {
-    mt19937 rng(42);
-    uniform_int_distribution<int> dist(0, 1000);
-    long long total = 0;
-
-    for (int t = 0; t < trials; t++) {
-        vector<int> A(n);
-        for (int i = 0; i < n; i++) A[i] = dist(rng);
-
-        auto start = high_resolution_clock::now();
-        recursiveWrapper(A, 500); // pivot = 500
-        auto stop = high_resolution_clock::now();
-        total += duration_cast<microseconds>(stop - start).count();
-    }
-    return total / trials;
-}
-
-long long iterativeTime(int n, int trials) {
-    mt19937 rng(1337);
-    uniform_int_distribution<int> dist(0, 1000);
-    long long total = 0;
-
-    for (int t = 0; t < trials; t++) {
-        vector<int> A(n);
-        for (int i = 0; i < n; i++) A[i] = dist(rng);
-
-        auto start = high_resolution_clock::now();
-        iterativeAlgo(A, 500); // set pivot = 500
-        auto stop = high_resolution_clock::now();
-        total += duration_cast<microseconds>(stop - start).count();
-    }
-    return total / trials;
-}
-
 int main() {
-    vector<int> sizes = {10, 100, 500}; // Different array sizes
+    vector<int> sizes = {100, 1000, 10000}; // Array of difference sizes
+    int N = 100;    // Random number generation range
 
-    cout << "n, Recursive(us), Iterative(us)\n";
+    cout << "Input Array Size\tRecursive\tIterative\n";
+
     for (int n : sizes) {
         int trials = (n == 10 ? 5000 : (n == 100 ? 1000 : 200));
-        long long r = recursiveTime(n, trials);
-        long long it = iterativeTime(n, trials);
-        cout << n << ", " << r << ", " << it << "\n";
+        long long totalRec = 0, totalIt = 0;    // Time totals
+
+        for (int t = 0; t < trials; t++) {
+            // Create array with random numbers
+            vector<int> A(n);
+            for (int i = 0; i < n; i++){A[i] = rand() % N;} // Random number generation
+
+            // Recurisve array time capture
+            auto Arec = A; // copy array
+            auto startRec = high_resolution_clock::now();   // Start funny clock
+            recursiveWrapper(Arec, 500);
+            auto stopRec = high_resolution_clock::now();    // End funny clock
+            totalRec += duration_cast<microseconds>(stopRec - startRec).count();
+            
+            // Iterative array time capture
+            auto Ait = A; // copy array
+            auto startIt = high_resolution_clock::now();
+            iterativeAlgo(Ait, 500);
+            auto stopIt = high_resolution_clock::now();
+            totalIt += duration_cast<microseconds>(stopIt - startIt).count();
+        }
+
+        cout << n << "\t\t\t" 
+             << (totalRec / trials) << "\t\t"
+             << (totalIt / trials) << "\n";
     }
+
+    return 0;
 }
