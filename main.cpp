@@ -2,29 +2,27 @@
 using namespace std;
 using namespace chrono;
 
-// ===== Recursive Partition =====
-int partitionRecursive(vector<int>& A, int k, int i, int write) {
-    if (i == A.size()) return write;
+int recursiveAlgo(vector<int>& A, int k, int i, int write) {    // Recursive algorithm
+    if (i == A.size()) return write;    // Return if at end of array
 
-    write = partitionRecursive(A, k, i + 1, write);
+    write = recursiveAlgo(A, k, i + 1, write);  // Make recursive call
 
-    if (A[i] <= k) {
+    if (A[i] <= k) {    // Check if current element is less/equal to k
         int val = A[i];
         for (int j = i; j > write; j--) {
             A[j] = A[j - 1];
         }
-        A[write] = val;
-        write++;
+        A[write] = val; // Set element at writing position to val; shift it over 
+        write++;    // Increment writing position
     }
     return write;
 }
 
-void partitionWrapper(vector<int>& A, int k) {
-    partitionRecursive(A, k, 0, 0);
+void recursiveWrapper(vector<int>& A, int k) {  // Wrapper to make recursive calls
+    recursiveAlgo(A, k, 0, 0);
 }
 
-// ===== Iterative Partition (stable, extra array) =====
-void partitionIterative(vector<int>& A, int k) {
+void iterativeAlgo(vector<int>& A, int k) {
     vector<int> B;
     B.reserve(A.size());
 
@@ -40,7 +38,7 @@ void partitionIterative(vector<int>& A, int k) {
 }
 
 // ===== Timing Harness =====
-long long timeRecursive(int n, int trials) {
+long long recursiveTime(int n, int trials) {
     mt19937 rng(42);
     uniform_int_distribution<int> dist(0, 1000);
     long long total = 0;
@@ -50,14 +48,14 @@ long long timeRecursive(int n, int trials) {
         for (int i = 0; i < n; i++) A[i] = dist(rng);
 
         auto start = high_resolution_clock::now();
-        partitionWrapper(A, 500); // pivot = 500
+        recursiveWrapper(A, 500); // pivot = 500
         auto stop = high_resolution_clock::now();
         total += duration_cast<microseconds>(stop - start).count();
     }
     return total / trials;
 }
 
-long long timeIterative(int n, int trials) {
+long long iterativeTime(int n, int trials) {
     mt19937 rng(1337);
     uniform_int_distribution<int> dist(0, 1000);
     long long total = 0;
@@ -67,7 +65,7 @@ long long timeIterative(int n, int trials) {
         for (int i = 0; i < n; i++) A[i] = dist(rng);
 
         auto start = high_resolution_clock::now();
-        partitionIterative(A, 500); // pivot = 500
+        iterativeAlgo(A, 500); // set pivot = 500
         auto stop = high_resolution_clock::now();
         total += duration_cast<microseconds>(stop - start).count();
     }
@@ -75,13 +73,13 @@ long long timeIterative(int n, int trials) {
 }
 
 int main() {
-    vector<int> sizes = {10, 100, 500};
+    vector<int> sizes = {10, 100, 500}; // Different array sizes
 
     cout << "n, Recursive(us), Iterative(us)\n";
     for (int n : sizes) {
         int trials = (n == 10 ? 5000 : (n == 100 ? 1000 : 200));
-        long long r = timeRecursive(n, trials);
-        long long it = timeIterative(n, trials);
+        long long r = recursiveTime(n, trials);
+        long long it = iterativeTime(n, trials);
         cout << n << ", " << r << ", " << it << "\n";
     }
 }
