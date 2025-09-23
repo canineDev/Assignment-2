@@ -2,6 +2,7 @@
 #include <vector>
 #include <chrono>
 #include <cstdlib>
+#include <ctime>
 
 using namespace std;
 using namespace chrono;
@@ -45,6 +46,7 @@ void iterativeAlgo(vector<int>& A, int k) {
 }
 
 int main() {
+    srand(time(0));
     vector<int> sizes = {100, 1000, 10000}; // Array of difference sizes
     int N = 100;    // Random number generation range
 
