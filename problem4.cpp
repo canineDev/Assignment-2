@@ -46,7 +46,7 @@ int main() {
         vector<int> A(n);
         for (int i = 0; i < n; i++){A[i] = rand() % N;} // Random number generation
         sort(A.begin(), A.end());       // Sort array
-        int k = A[n/2] + A[n/2 + 1];    // Guaranteed sum
+        int k = A[0] + A[n - 1];        // always valid
 
         int trials = 1000;
         long long totalRec = 0, totalIt = 0;
