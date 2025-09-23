@@ -37,10 +37,10 @@ bool findPairIterative(const vector<int>& A, int k) {
 
 int main() {
     srand(time(0));
-    vector<int> sizes = {10, 100, 500};
+    vector<int> sizes = {10, 100, 500}; // Array of difference sizes
     int N = 100;    // Random number generation range
 
-    cout << "n, Recursive(us), Iterative(us)\n";
+    cout << "Input Array Size\tRecursive\tIterative\n";
 
     for (int n : sizes) {
         vector<int> A(n);
@@ -63,8 +63,8 @@ int main() {
             totalIt += duration_cast<microseconds>(stopIt - startIt).count();
         }
 
-        cout << n << ", "
-             << (totalRec / trials) << ", "
+        cout << n << "\t\t\t" 
+             << (totalRec / trials) << "\t\t"
              << (totalIt / trials) << "\n";
     }
 }
