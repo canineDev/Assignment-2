@@ -52,11 +52,13 @@ int main() {
         long long totalRec = 0, totalIt = 0;
 
         for (int t = 0; t < trials; t++) {
-            auto startRec = high_resolution_clock::now();
+            // Recurisve array time capture
+            auto startRec = high_resolution_clock::now();   // Start funny clock
             findPairRecursiveWrapper(A, k);
-            auto stopRec = high_resolution_clock::now();
+            auto stopRec = high_resolution_clock::now();    // End funny clock
             totalRec += duration_cast<microseconds>(stopRec - startRec).count();
 
+            // Iterative array time capture
             auto startIt = high_resolution_clock::now();
             findPairIterative(A, k);
             auto stopIt = high_resolution_clock::now();
